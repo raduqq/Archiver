@@ -3,14 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define LINE_MAX 512
+#include "tema3.h"
 
 int main() {
     char input[LINE_MAX], delim[] = {" "}, *p;
     char ok, cnt, command [LINE_MAX], archive_name[LINE_MAX], file_name[LINE_MAX], directory_name[LINE_MAX], command_arguments, command_type;
 
-// task 0
+// task 0: interpretarea input-ului
 
     while (1) {
         fgets(input, sizeof(input), stdin);
@@ -74,13 +73,16 @@ int main() {
         else {
             switch(command_type) {
                 case 1:
-                    //create(archive_name, directory_name);
+// task 1: create
+                    create(archive_name, directory_name);
                     break;
                 case 2:
-                    //list(archive_name);
+// task 2: list
+                    list(archive_name);
                     break;
                 case 3:
-                    //extract(file_name, archive_name);
+// task 3: extract
+                    extract(file_name, archive_name);
                     break;
                 case 4:
                     exit(0);

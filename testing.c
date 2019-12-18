@@ -1,13 +1,18 @@
-// Copyright 2019 Radu-Stefan Minea 314CA
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tema3.h"
 
-void create(char archive_name[], char directory_name[]) {
-    char buffer[LINE_MAX], files_path[LINE_MAX], usermap_path[LINE_MAX];
+#define RECORDSIZE 512
+#define LINE_MAX 512
+
+int main() {
+//purpose: parsing files, usermap
+    char buffer[LINE_MAX];
     union record filedata;
+
+    char directory_name[] = {"testradu/"};
+    char files_path[LINE_MAX], usermap_path[LINE_MAX];
 
     strcpy(filedata.header.magic, "GNUtar ");
     memset(&filedata, '\0', sizeof(filedata));
@@ -18,14 +23,18 @@ void create(char archive_name[], char directory_name[]) {
     strcat(files_path, "files.txt");
     strcat(usermap_path, "usermap.txt");
 
-    FILE *files = fopen("files.txt", "r");
-    FILE *usermap = fopen("usermap.txt", "r");
+    FILE *files = fopen(files_path, "r");
+    FILE *usermap = fopen(usermap_path, "r");
+    
 
     while(fgets(buffer, sizeof(buffer), files)) {
         memset(filedata.header.chksum, '\0', sizeof(filedata.header.chksum));
-        ///obs : buffer ends in NEW LINE
+        //TODO: mod, user/groupname, size, timestamp, name/linkname
+        
     }
 
     fclose(files);
     fclose(usermap);
+    
+    return 0;
 }
