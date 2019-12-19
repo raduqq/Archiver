@@ -11,7 +11,7 @@ union record {
     struct header {
         char name[100], mode[8], uid[8], gid[8], size[12], mtime[12], chksum[8],
             typeflag, linkname[100], magic[8], uname[32], gname[32],
-            devmajor[8], devminor[8]; //clear these fuckers w/ memset
+            devmajor[8], devminor[8];
     } header;
 };
 
