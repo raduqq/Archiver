@@ -1,38 +1,18 @@
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "tema3.h"
 
+
 int main() {
-    /*time_t rawtime;
-    time(&rawtime);
-    printf("Rawtime = %ld\n", rawtime);
-
-    struct tm timeinfo;
-    memset(&timeinfo, '\0', sizeof(timeinfo));
-    mktime(&timeinfo);
-    printf("Mktime = %p\n", timeinfo);*/
-
-    struct tm last_modified_time;
-
-    char input_date[] = {"2019-12-17 19:39:39.888792925 +0200"}, input_time[] = {"2019-12-17 19:39:39.888792925 +0200"};
-    char space[] = {" "}, dash[] = {"-"}, colon[] = {":"};
-
-// year
-    char *p = strtok(input_date, space);
-    last_modified_time.tm_year = atoi(strtok(p, dash));
-// month
-    last_modified_time.tm_mon = atoi(strtok(NULL, dash));
-// day
-    last_modified_time.tm_mday = atoi(strtok(NULL, space));
-//hour
-    p = strtok(input_time, space);
-   /* p = strtok(input_time, space);
-    p = strtok(NULL, space);
-    p = strtok(NULL, colon);
-    //last_modified_time.tm_hour = atoi(strtok(NULL, colon));
-    puts(p);
-    //printf("%d\n", last_modified_time.tm_hour); */
+    struct tm last_modified_time = {0};
+    strptime("2019-12-17 19:39:39.888792925 +0200", "%Y-%m-%d %H:%M:%S", &last_modified_time);
+   // strptime("2001-11-12 18:31:01", "%Y-%m-%d %H:%M:%S", &last_modified_time);
+    //char *s = strptime("2019-12-17 19:39:39.888792925 +0200", "%Y-%m-%d %H:%M:%S", &last_modified_time);
+    printf("Year = %d\nMonth= %d\nDay = %d\nHour = %d\nMinute = %d\nSeconds = %d\n", last_modified_time.tm_year, last_modified_time.tm_mon, last_modified_time.tm_mday, last_modified_time.tm_hour, last_modified_time.tm_min, last_modified_time.tm_sec);
+    time_t rawtime = mktime(&last_modified_time);
+    printf("RAWTIME = %ld\n", rawtime);
     return 0;
 }

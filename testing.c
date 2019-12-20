@@ -1,31 +1,16 @@
+// INCLUDE FAIL WHEN OPENING FILES
+
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "tema3.h"
-
-#define RECORDSIZE 512
-#define LINE_MAX 512
-
-int to_octal(int x) {
-    int rest, octal = 0, reverse = 0;
-
-    while(x) {
-        rest = x - ((x / 8) * 8);
-        octal = octal * 10 + rest;
-        x /= 8;
-    }
-
-    while(octal) {
-        reverse = reverse * 10 + (octal % 10);
-        octal /= 10;
-    }
-    return reverse;
-}
 
 int main() {
 //purpose: parsing files, usermap
     int i, j;
-    char buffer[LINE_MAX], *p, *endptr, delim[] = {" "};
+    char buffer[LINE_MAX], *p, *endptr, space[] = {" "}, colon[] = {":"};
     union record filedata;
 
     char directory_name[] = {"radutest/"};  
@@ -37,20 +22,18 @@ int main() {
     strcat(files_path, "files.txt");
     strcat(usermap_path, "usermap.txt");
 
-    FILE *files = fopen(files_path, "r");
-    FILE *usermap = fopen(usermap_path, "r");
-    
+    FILE *files, *usermap;    
 
+    files = fopen(files_path, "r");
     while(fgets(buffer, sizeof(buffer), files)) {
         buffer[strlen(buffer) - 1] = '\0'; // solved the buffer ending in newline
         memset(&filedata, 0, sizeof(filedata));
         strcpy(filedata.header.magic, "GNUtar ");
-        //TODO: size, timestamp, name/linkname
 
 // permissions/mode
-        p = strtok(buffer, delim);
-        for (i = 5; i <= 7; i++) {
-            for (j = (i - 5) * 3 + 1; j <= (i - 4) * 3; j++) {
+        p = strtok(buffer, space);
+        for (i = 0; i <= 2; i++) {
+            for (j = i * 3 + 1; j <= (i + 1) * 3; j++) {
                 if (j % 3 == 1 && p[j] == 'r') {
                     filedata.header.mode[i] += 4;
                 }
@@ -64,26 +47,84 @@ int main() {
         }
 
 // no_links
-        p = strtok(NULL, delim);
+        p = strtok(NULL, space);
 
 // owner_name
-        p = strtok(NULL, delim);
+        p = strtok(NULL, space);
         strcpy(filedata.header.uname, p);
 
 // owner_group
-        p = strtok(NULL, delim);
+        p = strtok(NULL, space);
         strcpy(filedata.header.gname, p);
 
 // size
-        p = strtok(NULL, delim);
-        int size = strtol(p, &endptr, 10); // wtf it s char?!?
+        p = strtok(NULL, space);
+        int size = strtol(p, &endptr, 10);
         sprintf(filedata.header.size, "%o", size);
-        //size = to_octal(size);
-        puts(filedata.header.size);
-    }
+        //puts(filedata.header.size);
+        // possible problem here: not sure @proper 0000172 archiving
 
+// last_change_time
+        p = strtok(NULL, space);
+        struct tm last_modified_time = {0};
+        strptime(p, "%Y-%m-%d", &last_modified_time);
+        //last_modified_time.tm_year += 1900; last_modified_time.tm_mon += 1;
+
+
+        p = strtok(NULL, space);
+        strptime(p, "%H:%M:%S", &last_modified_time);
+
+        time_t rawtime = mktime(&last_modified_time);
+
+        sprintf(filedata.header.mtime, "%ld", rawtime);
+
+// name
+        p = strtok(NULL, space); p = strtok(NULL, space);
+        strcpy(filedata.header.name, p);
+        strcpy(filedata.header.linkname, p);
+
+// parsing usermap
+        usermap = fopen(usermap_path, "r");
+        char ok = 0;
+        while(fgets(buffer, sizeof(buffer), usermap) && ok == 0) {
+            p = strtok(buffer, ":");
+            if(strcmp(p, filedata.header.uname) == 0) {
+                ok = 1;
+                p = strtok(NULL, colon); p = strtok(NULL, colon);
+                strcpy(filedata.header.uid, p);
+
+                p = strtok(NULL, colon);
+                strcpy(filedata.header.gid, p);
+            }
+        }
+        fclose(usermap);
+
+// chksum
+        int sum = 0;
+        for (i = 0; i < sizeof(filedata.header.name); i++) {
+            sum += (int)filedata.header.name[i];
+            sum += (int)filedata.header.linkname[i];
+        }
+        for (i = 0; i < sizeof(filedata.header.uname); i++) {
+            sum += (int)filedata.header.uname[i];
+            sum += (int)filedata.header.gname[i];
+        }
+        for (i = 0; i < sizeof(filedata.header.size); i++) {
+            sum += (int)filedata.header.size[i];
+            sum += (int)filedata.header.mtime[i];
+        }
+        for (i = 0; i < sizeof(filedata.header.mode); i++) {
+            sum += (int)filedata.header.mode[i];
+            sum += (int)filedata.header.uid[i];
+            sum += (int)filedata.header.gid[i];
+            sum += (int)filedata.header.magic[i];
+            sum += (int)filedata.header.devmajor[i];
+            sum += (int)filedata.header.devminor[i];
+        }
+        sprintf(filedata.header.chksum, "%o", sum);
+
+// all we gotta do: write the actual file.
+    }
     fclose(files);
-    fclose(usermap);
-    
     return 0;
 }
