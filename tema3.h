@@ -6,7 +6,7 @@
 #define RECORDSIZE 512
 #define LINE_MAX 512
 //#define _XOPEN_SOURCE 700
-
+#define CHKBLANKS "        "
 union record {
     char charptr[RECORDSIZE];
     struct header {

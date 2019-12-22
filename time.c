@@ -13,6 +13,6 @@ int main() {
     //char *s = strptime("2019-12-17 19:39:39.888792925 +0200", "%Y-%m-%d %H:%M:%S", &last_modified_time);
     printf("Year = %d\nMonth= %d\nDay = %d\nHour = %d\nMinute = %d\nSeconds = %d\n", last_modified_time.tm_year, last_modified_time.tm_mon, last_modified_time.tm_mday, last_modified_time.tm_hour, last_modified_time.tm_min, last_modified_time.tm_sec);
     time_t rawtime = mktime(&last_modified_time);
-    printf("RAWTIME = %ld\n", rawtime);
+    printf(" = %ld\n", rawtime);
     return 0;
 }

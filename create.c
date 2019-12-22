@@ -6,25 +6,9 @@
 #include <time.h>
 #include "tema3.h"
 
-int to_octal(int x) {
-    int rest, octal = 0, reverse = 0;
-
-    while(x) {
-        rest = x - ((x / 8) * 8);
-        octal = octal * 10 + rest;
-        x /= 8;
-    }
-
-    while(octal) {
-        reverse = reverse * 10 + (octal % 10);
-        octal /= 10;
-    }
-    return reverse;
-}
-
 void create(char archive_name[], char directory_name[]) {
     int i, j;
-    char buffer[LINE_MAX], files_path[LINE_MAX], usermap_path[LINE_MAX];
+    char buffer[RECORDSIZE], files_path[RECORDSIZE], usermap_path[RECORDSIZE];
     union record filedata;
 
     strcpy(filedata.header.magic, "GNUtar ");
