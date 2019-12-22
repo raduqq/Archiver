@@ -143,15 +143,17 @@ int main() {
 // typeflag
         filedata.header.typeflag = '\0';
 // magic
-        strcpy(filedata.header.magic, "GNUtar ");
+        //strcpy(filedata.header.magic, "GNUtar ");
+        strcpy(filedata.header.magic, "ustar  ");
+
 // devmajor
         memset(filedata.header.devmajor, '\0', sizeof(filedata.header.devmajor));
 // devminor
         memset(filedata.header.devminor, '\0', sizeof(filedata.header.devminor));
-// chksum: STILL SOMTHING WRONG ABOUT IT!!
+// chksum
         int sum = 0;
         char chkblanks[] = {CHKBLANKS};
-        for (i = 0; i <= sizeof(chkblanks); i++) {
+        for (i = 0; i < sizeof(chkblanks); i++) {
             sum += (int)chkblanks[i];
         }
         sum += (int)filedata.header.typeflag;
