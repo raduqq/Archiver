@@ -1,7 +1,5 @@
-// INCLUDE FAIL WHEN OPENING FILES
 // TODO: FUNCTION TO "REVERSE" STRING  
 
-#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +23,10 @@ int main() {
     FILE *files, *usermap, *archive;    
 
     files = fopen(files_path, "r");
+    opened_file_check(files);
+
     archive = fopen(archive_name, "wb");
+    opened_file_check(archive);
 
     memset(padding, 0, sizeof(padding));
 
@@ -53,7 +54,9 @@ int main() {
         p = strtok(NULL, space);
 
 // owner_name
-        //get_owner_name
+        //get_owner_name(filedata, filedata.header.uname, p);
+        //get_owner_group(filedata, filedata.header.gname, p);
+
         memset(filedata.header.uname, '\0', sizeof(filedata.header.uname));
         p = strtok(NULL, space);
         strcpy(filedata.header.uname, p);
@@ -84,8 +87,6 @@ int main() {
         p = strtok(NULL, space);
         struct tm last_modified_time = {0};
         strptime(p, "%Y-%m-%d", &last_modified_time);
-        //last_modified_time.tm_year += 1900; last_modified_time.tm_mon += 1;
-
 
         p = strtok(NULL, space);
         strptime(p, "%H:%M:%S", &last_modified_time);
@@ -101,7 +102,6 @@ int main() {
         p = strtok(NULL, space); p = strtok(NULL, space);
         strcpy(filedata.header.name, p);
         strcpy(filedata.header.linkname, p);
-        //filedata.header.linkname[0] = '0';
 
 
 // parsing usermap:
@@ -112,6 +112,8 @@ int main() {
         char uid_aux[sizeof(filedata.header.uid)], gid_aux[sizeof(filedata.header.gid)];
 
         usermap = fopen(usermap_path, "r");
+        opened_file_check(usermap);
+
         char ok = 0;
         while(fgets(buffer, sizeof(buffer), usermap) && ok == 0) {
             p = strtok(buffer, ":");
@@ -126,7 +128,6 @@ int main() {
                     filedata.header.uid[i] = uid_aux[j];
                 }
                 filedata.header.uid[sizeof(filedata.header.uid) - 1] = '\0';
-                //sprintf(filedata.header.uid, "%o", atoi(p));
 // gid
                 p = strtok(NULL, colon);
                 gid = atoi(p);
@@ -139,13 +140,10 @@ int main() {
         }
 
         fclose(usermap);
-
 // typeflag
         filedata.header.typeflag = '\0';
 // magic
-        //strcpy(filedata.header.magic, "GNUtar ");
-        strcpy(filedata.header.magic, "ustar  ");
-
+        strcpy(filedata.header.magic, "GNUtar ");
 // devmajor
         memset(filedata.header.devmajor, '\0', sizeof(filedata.header.devmajor));
 // devminor
@@ -183,12 +181,6 @@ int main() {
         for (i = sizeof(filedata.header.chksum) - strlen(sum_aux) - 1, j = 0; i < sizeof(filedata.header.chksum) - 1 && j < strlen(sum_aux); i++, j++) {
                     filedata.header.chksum[i] = sum_aux[j];
         }
-        
-        // shifting left
-        /*for (i = 0; i < sizeof(filedata.header.chksum) - 1; i++) {
-            filedata.header.chksum[i] = filedata.header.chksum[i + 1];
-        }
-        filedata.header.chksum[sizeof(filedata.header.chksum) - 2] = '\0';*/
         filedata.header.chksum[sizeof(filedata.header.chksum) - 1] = '\0';
 
 // writing HEADER to archive
@@ -234,6 +226,6 @@ int main() {
 
 
     fclose(files);
-    fclose(archive);
+    fclose(archive); 
     return 0;
 }
