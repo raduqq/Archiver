@@ -1,7 +1,0 @@
-sshd:x:114:65534::/var/run/sshd:/usr/sbin/nologin
-admin:x:1003:118::/home/admin:/bin/sh
-mysql:x:116:127:MySQL Server,,,:/nonexistent:/bin/false
-ntp:x:121:135::/home/ntp:/bin/false
-user_name:x:1008:1008:User Name,,,:/home/user_name:/bin/bash
-raduminea:x:1000:1000:Radu-Stefan Minea,,,:/home/raduminea:/bin/bash
-gicu:x:1001:1001:Gicu Amicu,,,:/home/gicu:/bin/bash

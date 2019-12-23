@@ -78,7 +78,7 @@ int main() {
                     break;
                 case 2:
 // task 2: list
-                    //list(archive_name);
+                    list(archive_name);
                     break;
                 case 3:
 // task 3: extract
