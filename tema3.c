@@ -17,19 +17,13 @@ int to_decimal(int x, int base) {
   return decimal;
 }
 
-void is_this_file_there(FILE *f, int *ok) {
-  if (f == NULL) {
-    printf("> File not found!\n");
-    *ok = 0;
-  }
-}
-
 void opened_file_check(FILE *f) {
     if(f == NULL) {
       printf("> Failed\n");
       exit(-1);
     }
 }
+
 // USE MACROS ON THIS ONE
 void get_mode(char *mode, char *p) {
     unsigned int i, j;
