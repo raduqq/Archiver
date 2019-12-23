@@ -5,10 +5,29 @@
 #include <string.h>
 #include "./tema3.h"
 
+int to_decimal(int x, int base) {
+  int decimal = 0, pow = 1;
+
+  while(x) {
+    decimal += (x % 10) * pow;
+    pow *= base;    
+    x /= 10;
+  }
+
+  return decimal;
+}
+
+void is_this_file_there(FILE *f, int *ok) {
+  if (f == NULL) {
+    printf("> File not found!\n");
+    *ok = 0;
+  }
+}
+
 void opened_file_check(FILE *f) {
     if(f == NULL) {
-        printf("< Failed!\n");
-        exit(-1);
+      printf("> Failed\n");
+      exit(-1);
     }
 }
 // USE MACROS ON THIS ONE

@@ -7,6 +7,7 @@
 
 #define RECORDSIZE 512
 #define LINE_MAX 512
+#define OCTAL_BASE 8
 #define CHKBLANKS "        "
 
 union record {
@@ -18,6 +19,12 @@ union record {
     } header;
 };
 
+
+//get_eof_pos
+//get_size
+//check_end_archive
+void is_this_file_there(FILE *, int *);
+int to_decimal(int, int);
 void create(char *, char *);
 void list(char *);
 void extract(char *, char *);

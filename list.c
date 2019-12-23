@@ -6,7 +6,7 @@
 #include "tema3.h"
 
 void list(char *archive_name) {
-    int i, j, filesize;        
+    unsigned int filesize;        
     union record filedata;
     char buffer[RECORDSIZE], name[sizeof(filedata.header.name)], filesize_aux[sizeof(filedata.header.size)]; 
         
@@ -19,7 +19,7 @@ void list(char *archive_name) {
     int eof_pos = ftell(archive);
     fseek(archive, 0, SEEK_SET);
 
-//    while(ftell(archive) < eof_pos) {
+    while(ftell(archive) < eof_pos) {
         // reading the header:
         // name
         int pos_init = ftell(archive);
@@ -31,36 +31,26 @@ void list(char *archive_name) {
         
         fseek(archive, filesize_position, SEEK_CUR);
         fread(filesize_aux, sizeof(filesize_aux), 1, archive);
-        printf("Initially.. ");
-        puts(filesize_aux);
         
-        int ok = 0;
-        for (i = 0, j = 0; i < sizeof(filesize_aux); i++) { //something s getting funky right here
-            if(filesize_aux[i]) {
-                ok = 1;
-            }
-            if(ok) {
-                filesize_aux[j] = filesize_aux[i];
-                j++;
-            }
-            filesize_aux[i] = '\0';
-        }
         sscanf(filesize_aux, "%d", &filesize);
-        printf("Size = %d\n", filesize);
-        puts(filesize_aux);
-        // TODO: to decimal
+        filesize = to_decimal(filesize, OCTAL_BASE);
 
         // skipping to content
-        int pos_cur = ftell(archive);
-        fseek(archive, RECORDSIZE - (pos_cur - pos_init), SEEK_CUR);
+        fseek(archive, RECORDSIZE + pos_init, SEEK_SET);
 
         // content
-
+        int record_blocks = filesize / RECORDSIZE;
+        if (filesize % RECORDSIZE) {
+            record_blocks++;
+        }
+        for(int i = 0; i < record_blocks; i++) {
+            fread(buffer, sizeof(buffer), 1, archive);
+        }
 
         // checks if end of archive (marked by a record of zeroes) is reached    
-        /*if(ftell(archive) + RECORDSIZE == eof_pos) {
+        if(ftell(archive) + RECORDSIZE == eof_pos) {
             break;
-        }*/
-  //  }
-    printf("< Done!\n");
+        }
+   }
+    printf("> Done!\n");
 }

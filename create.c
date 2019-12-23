@@ -144,22 +144,11 @@ void create(char archive_name[], char directory_name[]) {
     strcat(to_archive_path, filedata.header.name);
 
     FILE *to_archive = fopen(to_archive_path, "rb");
-/////////////////////////
     memset(buffer, '\0', sizeof(buffer));
-    /*while(1) {
-      memset(buffer, '\0', sizeof(buffer));
-      bytes_read = fread(buffer, 1, sizeof(buffer), to_archive);
-      if(bytes_read > 0) {
-        fwrite(buffer, 1, sizeof(buffer), archive);
-      } else {
-        break;
-      }
-    }*/
     while (fread(buffer, 1, sizeof(buffer), to_archive)) {
       fwrite(buffer, 1, sizeof(buffer), archive);
       memset(buffer, '\0', sizeof(buffer));
     }
-/////////////////////////
     fclose(to_archive);
   }
   fwrite(padding, 1, sizeof(padding), archive);
