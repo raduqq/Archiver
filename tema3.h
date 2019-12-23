@@ -24,5 +24,6 @@ void get_owner_name(union record, char *);
 void get_owner_group(union record, char *);
 void get_mode(char *, char *);
 void write_header(union record, char *, FILE *);
+int get_chksum(union record, int);
 
 #endif
