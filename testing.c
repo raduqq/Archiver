@@ -54,16 +54,7 @@ int main() {
 
     p = strtok(NULL, space);
     int size = atoi(p);
-
-    char size_aux[sizeof(filedata.header.size)];
-    sprintf(size_aux, "%o", size);
-
-    for (i = sizeof(filedata.header.size) - strlen(size_aux) - 1, j = 0;
-         i < sizeof(filedata.header.size) - 1 && j < strlen(size_aux);
-         i++, j++) {
-      filedata.header.size[i] = size_aux[j];
-    }
-    filedata.header.size[sizeof(filedata.header.size) - 1] = '\0';
+    get_string(filedata.header.size, size);
 
     // last_change_time
     memset(filedata.header.mtime, '\0', sizeof(filedata.header.mtime));
@@ -99,14 +90,14 @@ int main() {
       p = strtok(buffer, ":");
       if (strcmp(p, filedata.header.uname) == 0) {
         ok = 1;
-        // uid: MODULARIZE
+        // uid
         p = strtok(NULL, colon);
         p = strtok(NULL, colon);
 
         uid = atoi(p);
         get_string(filedata.header.uid, uid);
 
-        // gid: MODULARIZE
+        // gid
         p = strtok(NULL, colon);
 
         gid = atoi(p);
