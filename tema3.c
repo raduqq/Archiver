@@ -24,6 +24,8 @@ void get_owner_group(union record filedata, char *p) {
     strcpy(filedata.header.gname, p);
 }
 void get_mode(union record filedata, char *buffer, char *p) {
+    unsigned int i, j;
+    char space[] = {" "};    
     memset(filedata.header.mode, '0', sizeof(filedata.header.mode));
     p = strtok(buffer, space);
     for (i = 4; i < 7; i++) {

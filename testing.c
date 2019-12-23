@@ -2,6 +2,7 @@
 
 /// THIS SHOULD APPEAR ONLY IN BRANCH TESTING
 
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -133,7 +134,6 @@ int main() {
     // devminor
     memset(filedata.header.devminor, '\0', sizeof(filedata.header.devminor));
     // chksum: MODULARIZE
-    get_chksum();
     int sum = (int)filedata.header.typeflag;
     char chkblanks[] = {CHKBLANKS};
     for (i = 0; i < sizeof(chkblanks); i++) {
