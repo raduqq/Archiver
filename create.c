@@ -52,8 +52,7 @@ void create(char archive_name[], char directory_name[]) {
     p = strtok(NULL, space);
     int size = atoi(p);
     memset(filedata.header.size, '0', sizeof(filedata.header.size));
-    get_string(filedata.header.size, size);
-
+    get_string(filedata.header.size, size, sizeof(filedata.header.size));
     // last_change_time
     memset(filedata.header.mtime, '\0', sizeof(filedata.header.mtime));
 
@@ -93,14 +92,14 @@ void create(char archive_name[], char directory_name[]) {
 
         uid = atoi(p);
         memset(filedata.header.uid, '0', sizeof(filedata.header.uid));
-        get_string(filedata.header.uid, uid);
+        get_string(filedata.header.uid, uid, sizeof(filedata.header.uid));
 
         // gid
         p = strtok(NULL, colon);
 
         gid = atoi(p);
         memset(filedata.header.gid, '0', sizeof(filedata.header.gid));
-        get_string(filedata.header.gid, gid);
+        get_string(filedata.header.gid, gid, sizeof(filedata.header.gid));
       }
     }
 
@@ -116,7 +115,7 @@ void create(char archive_name[], char directory_name[]) {
     // chksum
     int sum = get_chksum(filedata, 0);
     memset(filedata.header.chksum, '0', sizeof(filedata.header.chksum));
-    get_string(filedata.header.chksum, sum);
+    get_string(filedata.header.chksum, sum, sizeof(filedata.header.chksum));
     // writing HEADER to archive
     fwrite(filedata.header.name, 1, sizeof(filedata.header.name), archive);
     fwrite(filedata.header.mode, 1, sizeof(filedata.header.mode), archive);
@@ -145,17 +144,22 @@ void create(char archive_name[], char directory_name[]) {
     strcat(to_archive_path, filedata.header.name);
 
     FILE *to_archive = fopen(to_archive_path, "rb");
-
+/////////////////////////
     memset(buffer, '\0', sizeof(buffer));
-    while (fread(buffer, sizeof(buffer), 1, to_archive)) {
+    /*while(1) {
+      memset(buffer, '\0', sizeof(buffer));
+      bytes_read = fread(buffer, 1, sizeof(buffer), to_archive);
+      if(bytes_read > 0) {
+        fwrite(buffer, 1, sizeof(buffer), archive);
+      } else {
+        break;
+      }
+    }*/
+    while (fread(buffer, 1, sizeof(buffer), to_archive)) {
       fwrite(buffer, 1, sizeof(buffer), archive);
       memset(buffer, '\0', sizeof(buffer));
     }
-
-    if (buffer[0] != '\0') {
-      fwrite(buffer, 1, sizeof(buffer), archive);
-    }
-
+/////////////////////////
     fclose(to_archive);
   }
   fwrite(padding, 1, sizeof(padding), archive);

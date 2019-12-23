@@ -26,6 +26,6 @@ void get_owner_name(union record, char *);
 void get_owner_group(union record, char *);
 void get_mode(char *, char *);
 int get_chksum(union record, int);
-void get_string(char *, int);
+void get_string(char *, int, unsigned int);
 
 #endif
