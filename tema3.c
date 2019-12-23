@@ -32,6 +32,20 @@ void get_mode(char *mode, char *p) {
     mode[sizeof(mode) - 1] = '\0';
 }
 
+void get_string(char *field, int numerical_value) {
+    unsigned int i, j;
+    char value_in_string[sizeof(field)];
+
+    memset(field, '0', sizeof(field));
+    sprintf(value_in_string, "%o", numerical_value);
+
+    for (i = sizeof(field) - strlen(value_in_string) - 1, j = 0;
+         i < sizeof(field) - 1 && j < strlen(value_in_string); i++, j++) {
+      field[i] = value_in_string[j];
+    }
+    field[sizeof(field) - 1] = '\0';
+}
+
 int get_chksum(union record filedata, int sum) {
   unsigned int i;
   char chkblanks[] = {CHKBLANKS};

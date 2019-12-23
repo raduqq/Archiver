@@ -39,7 +39,6 @@ int main() {
     // mode
     p = strtok(buffer, space);
     get_mode(filedata.header.mode, p);
-    puts(filedata.header.mode);
     // no_links
     p = strtok(NULL, space);
     // owner_name
@@ -90,17 +89,12 @@ int main() {
     strcpy(filedata.header.linkname, p);
 
     // parsing usermap:
-    memset(filedata.header.uid, '0', sizeof(filedata.header.uid));
-    memset(filedata.header.gid, '0', sizeof(filedata.header.gid));
-
-    int uid, gid;
-    char uid_aux[sizeof(filedata.header.uid)],
-        gid_aux[sizeof(filedata.header.gid)];
 
     usermap = fopen(usermap_path, "r");
     opened_file_check(usermap);
 
     char ok = 0;
+    int uid, gid;
     while (fgets(buffer, sizeof(buffer), usermap) && ok == 0) {
       p = strtok(buffer, ":");
       if (strcmp(p, filedata.header.uname) == 0) {
@@ -108,26 +102,16 @@ int main() {
         // uid: MODULARIZE
         p = strtok(NULL, colon);
         p = strtok(NULL, colon);
-        uid = atoi(p);
-        sprintf(uid_aux, "%o", uid);
 
-        for (i = sizeof(filedata.header.uid) - strlen(uid_aux) - 1, j = 0;
-             i < sizeof(filedata.header.uid) - 1 && j < strlen(uid_aux);
-             i++, j++) {
-          filedata.header.uid[i] = uid_aux[j];
-        }
-        filedata.header.uid[sizeof(filedata.header.uid) - 1] = '\0';
+        uid = atoi(p);
+        get_string(filedata.header.uid, uid);
+
         // gid: MODULARIZE
         p = strtok(NULL, colon);
+
         gid = atoi(p);
-        sprintf(gid_aux, "%o", gid);
-        for (i = sizeof(filedata.header.gid) - strlen(gid_aux) - 1, j = 0;
-             i < sizeof(filedata.header.gid) - 1 && j < strlen(gid_aux);
-             i++, j++) {
-          filedata.header.gid[i] = gid_aux[j];
+        get_string(filedata.header.gid, gid);
         }
-        filedata.header.gid[sizeof(filedata.header.gid) - 1] = '\0';
-      }
     }
 
     fclose(usermap);
@@ -141,18 +125,7 @@ int main() {
     memset(filedata.header.devminor, '\0', sizeof(filedata.header.devminor));
     // chksum: MODULARIZE
     int sum = get_chksum(filedata, 0);
-
-    memset(filedata.header.chksum, '0', sizeof(filedata.header.chksum));
-
-    char sum_aux[sizeof(filedata.header.chksum)];
-    sprintf(sum_aux, "%o", sum);
-
-    for (i = sizeof(filedata.header.chksum) - strlen(sum_aux) - 1, j = 0;
-         i < sizeof(filedata.header.chksum) - 1 && j < strlen(sum_aux);
-         i++, j++) {
-      filedata.header.chksum[i] = sum_aux[j];
-    }
-    filedata.header.chksum[sizeof(filedata.header.chksum) - 1] = '\0';
+    get_string(filedata.header.chksum, sum);
 
     // writing HEADER to archive
     fwrite(filedata.header.name, 1, sizeof(filedata.header.name), archive);
