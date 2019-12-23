@@ -51,5 +51,4 @@ void list(char *archive_name) {
             break;
         }
    }
-    printf("> Done!\n");
 }
