@@ -5,7 +5,7 @@
 
 #define RECORDSIZE 512
 #define LINE_MAX 512
-//#define _XOPEN_SOURCE 700
+#define _XOPEN_SOURCE 700
 #define CHKBLANKS "        "
 union record {
     char charptr[RECORDSIZE];
@@ -19,5 +19,10 @@ union record {
 void create(char *, char *);
 void list(char *);
 void extract(char *, char *);
+void opened_file_check(FILE *);
+void get_owner_name(union record, char *);
+void get_owner_group(union record, char *);
+void get_mode(union record, char *, char *);
+void write_header(union record, char *, FILE *);
 
 #endif

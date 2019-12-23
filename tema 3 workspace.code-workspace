@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"tema3.h": "c",
+			"stdlib.h": "c"
+		}
+	}
+}
