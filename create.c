@@ -22,7 +22,6 @@ void create(char archive_name[], char directory_name[]) {
 
   FILE *files, *usermap, *archive;
 
-  puts(files_path);  
   files = fopen(files_path, "r");
   //opened_file_check(files);
 

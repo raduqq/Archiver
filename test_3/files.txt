@@ -1,0 +1,4 @@
+-rw-rw-r--  1 raduminea raduminea 169966 2019-11-15 15:39:50.000000000 +0200 mars1.jpg
+-rw-rw-r--  1 raduminea raduminea 167920 2019-11-15 15:35:10.000000000 +0200 mars2.jpg
+-rw-rw-r--  1 raduminea raduminea 274628 2019-11-15 15:37:32.000000000 +0200 mars3.jpg
+-rw-rw-r--  1 raduminea raduminea 206460 2019-11-15 15:38:50.000000000 +0200 mars4.jpg

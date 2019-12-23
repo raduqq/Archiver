@@ -1,6 +1,5 @@
 // Copyright 2019 Radu-Stefan Minea 314CA
 
-#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

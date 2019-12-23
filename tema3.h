@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 
-#define _XOPEN_SOURCE 700
 #define RECORDSIZE 512
 #define LINE_MAX 512
 #define CHKBLANKS "        "
