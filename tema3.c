@@ -1,9 +1,10 @@
 // Copyright 2019 Radu-Stefan Minea 314CA
 
+#define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tema3.h"
+#include "./tema3.h"
 
 void opened_file_check(FILE *f) {
     if(f == NULL) {
@@ -14,8 +15,6 @@ void opened_file_check(FILE *f) {
 
 void get_mode(char *mode, char *p) {
     unsigned int i, j;
-    char space[] = {" "};    
-    memset(mode, '0', sizeof(mode));
     for (i = 4; i < 7; i++) {
       for (j = (i - 4) * 3 + 1; j <= (i - 3) * 3; j++) {
         if (j % 3 == 1 && p[j] == 'r') {
@@ -36,7 +35,6 @@ void get_string(char *field, int numerical_value) {
     unsigned int i, j;
     char value_in_string[sizeof(field)];
 
-    memset(field, '0', sizeof(field));
     sprintf(value_in_string, "%o", numerical_value);
 
     for (i = sizeof(field) - strlen(value_in_string) - 1, j = 0;

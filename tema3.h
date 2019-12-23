@@ -3,10 +3,13 @@
 #ifndef TEMA3_H
 #define TEMA3_H
 
+#include <stdio.h>
+
+#define _XOPEN_SOURCE 700
 #define RECORDSIZE 512
 #define LINE_MAX 512
-#define _XOPEN_SOURCE 700
 #define CHKBLANKS "        "
+
 union record {
     char charptr[RECORDSIZE];
     struct header {

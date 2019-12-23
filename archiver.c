@@ -78,11 +78,11 @@ int main() {
                     break;
                 case 2:
 // task 2: list
-                    list(archive_name);
+                    //list(archive_name);
                     break;
                 case 3:
 // task 3: extract
-                    extract(file_name, archive_name);
+                    //extract(file_name, archive_name);
                     break;
                 case 4:
                     exit(0);

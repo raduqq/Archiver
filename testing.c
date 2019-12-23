@@ -1,7 +1,5 @@
 // Copyright 2019 Radu-Stefan Minea 314CA
 
-/// THIS SHOULD APPEAR ONLY IN BRANCH TESTING
-
 #define _XOPEN_SOURCE 700
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +13,7 @@ int main() {
                                                     colon[] = {":"};
   union record filedata;
 
-  char directory_name[] = {"radutest/"}, archive_name[] = {"superarhiva.tar"};
+  //char directory_name[] = {"radutest/"}, archive_name[] = {"superarhiva.tar"};
   char files_path[RECORDSIZE], usermap_path[RECORDSIZE];
 
   strcpy(files_path, directory_name);
