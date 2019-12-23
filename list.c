@@ -20,7 +20,6 @@ void list(char *archive_name) {
     fseek(archive, 0, SEEK_SET);
 
     while(ftell(archive) < eof_pos) {
-        // reading the header:
         // name
         int pos_init = ftell(archive);
         fread(name, sizeof(name), 1, archive);

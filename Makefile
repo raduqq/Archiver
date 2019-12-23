@@ -7,7 +7,7 @@ TARGETS=archiver
 build: $(TARGETS)
 
 archiver: archiver.c
-	$(CC) $(CFLAGS) archiver.c create.c list.c tema3.c tema3.h -o archiver
+	$(CC) $(CFLAGS) archiver.c create.c list.c extract.c tema3.c tema3.h -o archiver
 
 clean:
 	rm -f $(TARGETS)
