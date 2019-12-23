@@ -1,5 +1,7 @@
 // Copyright 2019 Radu-Stefan Minea 314CA
 
+/// THIS SHOULD APPEAR ONLY IN BRANCH TESTING
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
