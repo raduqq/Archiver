@@ -10,12 +10,12 @@
 
 
 void create(char archive_name[], char directory_name[]) {
-  char buffer[RECORDSIZE], padding[RECORDSIZE], *p, space[] = {" "},
-                                                    colon[] = {":"};
-  union record filedata;
-  char files_path[RECORDSIZE], usermap_path[RECORDSIZE];
+  char buffer[RECORDSIZE], padding[RECORDSIZE], *p, space[] = {" "}, colon[] = {":"}, 
+      files_path[RECORDSIZE], usermap_path[RECORDSIZE], to_archive_path[RECORDSIZE];
 
-  memset(padding, 0, sizeof(padding));
+  union record filedata;
+  memset(&filedata.header, '\0', sizeof(filedata));
+  memset(padding, '\0', sizeof(padding));
 
   // determinarea filepath-ului pt. files.txt, usermap.txt
   strcpy(files_path, directory_name);
@@ -46,12 +46,10 @@ void create(char archive_name[], char directory_name[]) {
 
     // owner_name
     p = strtok(NULL, space);
-    memset(filedata.header.uname, '\0', sizeof(filedata.header.uname));
     strcpy(filedata.header.uname, p);
 
     // owner_group
     p = strtok(NULL, space);
-    memset(filedata.header.gname, '\0', sizeof(filedata.header.gname));
     strcpy(filedata.header.gname, p);
 
     // size
@@ -59,11 +57,9 @@ void create(char archive_name[], char directory_name[]) {
 
     p = strtok(NULL, space);
     int size = atoi(p);
-    memset(filedata.header.size, '0', sizeof(filedata.header.size));
     get_string(filedata.header.size, size, sizeof(filedata.header.size));
 
     // last_change_time
-    memset(filedata.header.mtime, '\0', sizeof(filedata.header.mtime));
 
     p = strtok(NULL, space);
     struct tm last_modified_time = {0};
@@ -77,9 +73,6 @@ void create(char archive_name[], char directory_name[]) {
     sprintf(filedata.header.mtime, "%lo", rawtime);
 
     // name/linkname
-    memset(filedata.header.name, '\0', sizeof(filedata.header.name));
-    memset(filedata.header.linkname, '\0', sizeof(filedata.header.linkname));
-
     p = strtok(NULL, space);
     p = strtok(NULL, space);
     strcpy(filedata.header.name, p);
@@ -113,21 +106,15 @@ void create(char archive_name[], char directory_name[]) {
 
     // typeflag
     filedata.header.typeflag = '\0';
-    
+
     // magic
     strcpy(filedata.header.magic, "GNUtar ");
-    
-    // devmajor
-    memset(filedata.header.devmajor, '\0', sizeof(filedata.header.devmajor));
-    
-    // devminor
-    memset(filedata.header.devminor, '\0', sizeof(filedata.header.devminor));
-    
+
     // chksum
     int sum = get_chksum(filedata, 0);
     memset(filedata.header.chksum, '0', sizeof(filedata.header.chksum));
     get_string(filedata.header.chksum, sum, sizeof(filedata.header.chksum));
-    
+
     // scrierea header-ului in arhiva
     fwrite(filedata.header.name, 1, sizeof(filedata.header.name), archive);
     fwrite(filedata.header.mode, 1, sizeof(filedata.header.mode), archive);
@@ -148,9 +135,8 @@ void create(char archive_name[], char directory_name[]) {
     fwrite(filedata.header.devminor, 1, sizeof(filedata.header.devminor),
            archive);
     fwrite(padding, 1, sizeof(padding) - sizeof(filedata.header), archive);
-    
+
     // scrierea continutului fisierului in arhiva
-    char to_archive_path[RECORDSIZE];
     memset(to_archive_path, '\0', sizeof(to_archive_path));
 
     strcpy(to_archive_path, directory_name);
@@ -158,6 +144,7 @@ void create(char archive_name[], char directory_name[]) {
 
     FILE *to_archive = fopen(to_archive_path, "rb");
     memset(buffer, '\0', sizeof(buffer));
+
     while (fread(buffer, 1, sizeof(buffer), to_archive)) {
       fwrite(buffer, 1, sizeof(buffer), archive);
       memset(buffer, '\0', sizeof(buffer));
