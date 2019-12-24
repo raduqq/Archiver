@@ -25,9 +25,8 @@ void get_eof_pos(int *eof_pos, FILE *f) {
 
 int get_filesize(FILE *f) {
   union record filedata;
-  int filesize;
   char filesize_aux[sizeof(filedata.header.size)];
-  int filesize_position = sizeof(filedata.header.mode) +
+  int filesize, filesize_position = sizeof(filedata.header.mode) +
                             sizeof(filedata.header.uid) +
                             sizeof(filedata.header.gid);
 

@@ -8,7 +8,7 @@
 void list(char *archive_name) {
   int eof_pos;
   union record filedata;
-  char buffer[RECORDSIZE], name[sizeof(filedata.header.name)];
+  char name[sizeof(filedata.header.name)];
   FILE *archive;
 
   archive = fopen(archive_name, "rb");
