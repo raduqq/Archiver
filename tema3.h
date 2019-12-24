@@ -21,7 +21,7 @@ union record {
 
 int to_decimal(int x, int base);
 void get_eof_pos(int *eof_pos, FILE *f);
-int get_filesize(FILE *f);
+// int get_filesize(FILE *f);
 void opened_file_check(FILE *f);
 void get_string(char *, int, int);
 void get_mode(char *mode, char *p);

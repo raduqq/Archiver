@@ -23,7 +23,7 @@ void get_eof_pos(int *eof_pos, FILE *f) {
   fseek(f, 0, SEEK_SET);
 }
 
-int get_filesize(FILE *f) {
+/*int get_filesize(FILE *f) {
   union record filedata;
   char filesize_aux[sizeof(filedata.header.size)];
   int filesize, filesize_position = sizeof(filedata.header.mode) +
@@ -36,7 +36,7 @@ int get_filesize(FILE *f) {
   sscanf(filesize_aux, "%d", &filesize);
   filesize = to_decimal(filesize, OCTAL_BASE);
   return filesize;
-}
+}*/
 
 void opened_file_check(FILE *f) {
   if (f == NULL) {
