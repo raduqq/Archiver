@@ -32,9 +32,6 @@ void extract(char *file_name, char *archive_name) {
             memset(to_write_path, '\0', sizeof(to_write_path));
             strcpy(to_write_path, "extracted_");
             strcat(to_write_path, file_name);
-            /////////////////////////////////
-            puts(to_write_path);
-            /////////////////////////////////
             to_write = fopen(to_write_path, "wb");
             ok_extracted = 1;
             opened_file_check(to_write);
@@ -53,10 +50,22 @@ void extract(char *file_name, char *archive_name) {
         fseek(archive, RECORDSIZE + pos_init, SEEK_SET);
 
         // content
-        /*int record_blocks = filesize / RECORDSIZE;
-        if (filesize % RECORDSIZE) {
+        int record_blocks = filesize / RECORDSIZE;
+        if ((filesize % RECORDSIZE) != 0) {
             record_blocks++;
-        }*/
+        }
+        for(i = 0; i < record_blocks; i++) {
+            fread(buffer, sizeof(buffer), 1, archive);
+            if (ok_extracted == 1) {
+                if ((i + 1 == record_blocks) && ((filesize % RECORDSIZE) != 0)) {
+                    fwrite(buffer, (filesize % RECORDSIZE), 1, to_write);
+                } else {
+                    fwrite(buffer, sizeof(buffer), 1, to_write);
+                }
+            }
+        }
+
+/*
         for(i = 0; i < filesize; i++) {
             c = fgetc(archive);
             if (ok_extracted == 1) {
@@ -66,7 +75,7 @@ void extract(char *file_name, char *archive_name) {
         for (i = filesize % RECORDSIZE; i < RECORDSIZE; i++) {
             c = fgetc(archive);
         }
-
+*/
         // checks if end of archive (marked by a record of zeroes) is reached    
         if(ftell(archive) + RECORDSIZE == eof_pos) {
             break;
