@@ -1,0 +1,116 @@
+================================================================================
+Tema 3 PC - Archiver
+Nume: Minea Radu-Stefan
+Seria: CA
+Grupa: 314CA
+================================================================================
+Timpul petrecut pe tema: ~ 1 saptamana
+================================================================================
+Descrierea proiectului
+
+> Tema proiectului este data de implementarea unui arhivator tar, ori, mai
+precis, a urmatoarelor functioalitati ale acestuia:
+	- Crearea unei arhive			(create)
+	- Listarea fiserelor unei arhive	(list)
+	- Extragerea unui fisier dintr-o arhiva	(extract)
+
+================================================================================
+Rulare
+
+> Create:	create arhive_name directory_name
+> List:		list archive_name
+> Extract:	extract file_name archive_name
+> Exit:		exit 					(iesirea din program)
+================================================================================
+Structura proiectului
+
+* Makefile
+> Include regulile build si clean 
+
+* archiver.c
+> "main-ul" programului
+> Se interpreteaza input-ul de venit de la tastatura:
+	- Se determina tipul comenzii, numarul de argumente asteptate de comanda
+	determinata => se compara cu input-ul	
+> In functie de input, functiile "create(...)", "list(...)" si "extract(...)" 
+realizeaza funcitonalitatea respectiva
+	- Cele 3 functii sunt implementate in fisierele-sursa omonime
+
+* tema3.c & tema3.h
+> Contine implementarile tuturor functiilor intrebuintate, in afara de cele
+mentionate mai sus
+
+* create.c
+> "opened_file_check(...)" -> verifica daca un fisier a fost deschis cu succes
+	- Daca nu, se iese din program
+> Cat timp se pot citi linii din files.txt ( = cat timp mai exista fisiere de 
+inclus in arhiva) :
+	-  "strtok(...)" -> parseaza liniile din files.txt, determinand elemente
+	ale header-ului fisierului ce va fi inclus in arhiva
+	- Determinarea timpului:
+		+ "strptime(...)" formateaza inputul de forma 
+			"2019-12-25 19:19:19.19191919 +0200" 
+		+ Il stocheaza intr-o structura de tipul "struct tm"
+			=> Obtinem "broken-down time"
+		+ "mktime(...)" transforma acest "broken-down time" intr-un
+		timestamp
+	- "write_header(...)" scrie datele header-ului cu ajutorul "fwrite(...)"
+	si adauga un padding cu '\0' de dimensiunea:
+		RECORDSIZE - sizeof(filedata.header)
+	- "filedata" este o structura de tip "union record" (descrisa in enunt)
+> La finalul loop-ului, se adauga un padding de '\0' cu dimensiunea RECORDSIZE
+(bloc de date de 512 bytes)
+
+* list.c
+> "get_eof_pos(...)" obtine pozitia indicatorului EOF ( = numarul de bytes 
+al arhivei) pentru a ne da seama pana unde putem citi date din arhiva
+	- Se realizeaza cu ajutorul "fseek(...)" -> muta cursorul la finalul
+	fisierului si "ftell(...)" -> gaseste numarul de bytes
+> Stiind dimensiunea unui header ( = RECORDSIZE) ce contine header-ul si ce
+dimensiune are fiecare element:
+	- Gasim cu usurinta numele fisierului ( = la inceputul blocului de date)
+	- Gasim pozitia unde se afla marimea fisierului ( = filesize), o preluam
+	si o convertim din astfel:
+		string -> octal -> decimal
+	- Determinam cate blocuri de date reprezinta continutul fisierului:
+		record_blocks = filesize / RECORDSIZE
+		if (filesize % RECORDSIZE) { record_blocks++; }
+	- Sarim cu "fseek(...)" peste aceste blocuri de date
+
+* extract.c
+> Foarte asemanator cu list.c, citirea datelor fiind aproape identica
+> Diferenta: continutul este scris in fisier, in loc sa fie sarit peste
+> Scrierea continutului fisierului ce trebuie extras in noul fisier:
+	- Se citesc blocurile de date determinate in functie de "filesize"
+	- Daca fisierul la care s-a ajuns este cel ce trebuie extras:
+		- Daca se citeste ultimul bloc si "filesize" NU este divizibil
+		cu RECORDSIZE ( = daca am scrie un bloc intreg de date, l-am
+		scrie cu tot cu padding-ul de '\0' => trebuie evitat asta astfel)
+			+ Se scrie un bloc de (filesize % RECORDSIZE) bytes
+		- Altfel, se scrie un bloc de date obisnuit ( = RECORDSIZE)
+> La finalul arhivei, se verifica daca fisierul a fost gasit si extras
+( ok_extracted = 1) si se afiseaza mesajele corespunzatoare		
+================================================================================
+Limitari
+
+> Desi recomandarea este de a folosi "break" in loc de variabile de conditii,
+n-am putut gasi o logica a extract-ului fara variabila de conditie:
+	- N-am putut da "break" while-ului ce citeste din arhiva, deoarece 
+	trebuia sa astept pana la finalul citirii arhivei sa vad daca fisierul
+	a fost gasit (ok_extracted = 1) sau nu
+> Am observat ca nu pot sa ating valoarea chksum-ului (in mod constant) dintr-o
+arhiva creata manual, decat facand urmatoarele modificari fata de cele precizate
+in enunt:
+	- Shiftarea la stanga a bitilor chksum-ului:
+		-> "011723\0\0" in loc de "0011723\0"
+	- Excluderea din printare a lui typeflag ( care e egal cu '\0')
+	- Linkname:
+		-> "0" in loc de numele fisierului
+	- Magic: 
+		-> "ustar  " in loc de "GNUtar "
+================================================================================
+Observatii
+
+> Tema asta a fost primul lucru facut pana acum in facultate ce mi s-a parut ca
+este ceva cu aplicabilitate in industrie ori "ceva mai tangent" cu ceea ce se
+intampla acolo.

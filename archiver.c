@@ -7,7 +7,7 @@
 
 int main() {
   char input[LINE_MAX], delim[] = {" "}, *p;
-  char ok, cnt, command[LINE_MAX], archive_name[LINE_MAX], file_name[LINE_MAX],
+  char cnt, command[LINE_MAX], archive_name[LINE_MAX], file_name[LINE_MAX],
       directory_name[LINE_MAX], command_arguments, command_type;
 
   // task 0: interpretarea input-ului
@@ -20,10 +20,10 @@ int main() {
     cnt = 1;
     strcpy(command, p);
 
-    ok = 1;
-    while (p != NULL && ok == 1) {
+    while (p != NULL) {
       if (cnt > 3) {
-        ok = 0;
+        printf("> Wrong command!\n");
+        break;
       }
       if (cnt == 1) {
         if (strcmp(command, "create") == 0) {
@@ -39,8 +39,9 @@ int main() {
           command_type = 4;
           command_arguments = 1;
         } else {
-          ok = 0;
-        }
+            printf("> Wrong command!\n");
+            break;
+          }
       }
       if (cnt == 2) {
         if (command_type == 1 || command_type == 2) {
@@ -64,28 +65,25 @@ int main() {
     }
     cnt--;
     if (cnt != command_arguments) {
-      ok = 0;
+      printf("> Wrong command!\n");
+      break;
     }
 
-    if (ok == 0) {
-      printf("> Wrong command!\n");
-    } else {
-      switch (command_type) {
-      case 1:
-        // task 1: create
-        create(archive_name, directory_name);
-        break;
-      case 2:
-        // task 2: list
-        list(archive_name);
-        break;
-      case 3:
-        // task 3: extract
-        extract(file_name, archive_name);
-        break;
-      case 4:
-        exit(0);
-      }
+    switch (command_type) {
+    case 1:
+      // task 1: create
+      create(archive_name, directory_name);
+      break;
+    case 2:
+      // task 2: list
+      list(archive_name);
+      break;
+    case 3:
+      // task 3: extract
+      extract(file_name, archive_name);
+      break;
+    case 4:
+      exit(0);
     }
   }
   return 0;
