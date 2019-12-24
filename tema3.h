@@ -19,18 +19,16 @@ union record {
     } header;
 };
 
-//get_eof_pos
-//get_size
-//check_end_archive
-int to_decimal(int, int);
-void create(char *, char *);
-void list(char *);
-void extract(char *, char *);
-void opened_file_check(FILE *);
-void get_owner_name(union record, char *);
-void get_owner_group(union record, char *);
-void get_mode(char *, char *);
-int get_chksum(union record, int);
+// get_eof_pos
+// get_size
+// check_end_archive
+int to_decimal(int x, int base);
+void opened_file_check(FILE *f);
 void get_string(char *, int, unsigned int);
+void get_mode(char *mode, char *p);
+int get_chksum(union record filedata, int sum);
+void list(char *archive_name);
+void create(char *archive_name, char *directory_name);
+void extract(char *file_name, char *archive_name);
 
 #endif

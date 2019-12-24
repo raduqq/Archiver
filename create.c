@@ -1,11 +1,13 @@
 // Copyright 2019 Radu-Stefan Minea 314CA
 
 #define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include "./tema3.h"
+
 
 void create(char archive_name[], char directory_name[]) {
   char buffer[RECORDSIZE], padding[RECORDSIZE], *p, space[] = {" "},
@@ -23,10 +25,10 @@ void create(char archive_name[], char directory_name[]) {
   FILE *files, *usermap, *archive;
 
   files = fopen(files_path, "r");
-  //opened_file_check(files);
+  // opened_file_check(files);
 
   archive = fopen(archive_name, "wb");
-  //opened_file_check(archive);
+  // opened_file_check(archive);
 
   memset(padding, 0, sizeof(padding));
 
@@ -78,7 +80,7 @@ void create(char archive_name[], char directory_name[]) {
 
     // parsing usermap:
     usermap = fopen(usermap_path, "r");
-    //opened_file_check(usermap);
+    // opened_file_check(usermap);
 
     char ok = 0;
     int uid, gid;

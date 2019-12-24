@@ -8,9 +8,9 @@
 int to_decimal(int x, int base) {
   int decimal = 0, pow = 1;
 
-  while(x) {
+  while (x) {
     decimal += (x % 10) * pow;
-    pow *= base;    
+    pow *= base;
     x /= 10;
   }
 
@@ -18,65 +18,68 @@ int to_decimal(int x, int base) {
 }
 
 void opened_file_check(FILE *f) {
-    if(f == NULL) {
-      printf("> Failed\n");
-      exit(-1);
-    }
+  if (f == NULL) {
+    printf("> Failed\n");
+    exit(-1);
+  }
 }
 
 // USE MACROS ON THIS ONE
+void get_string(char *field, int numerical_value, unsigned int datasize) {
+  #define DATASIZE_const datasize
+
+  unsigned int i, j;
+  char value_in_string[DATASIZE_const];
+
+  sprintf(value_in_string, "%o", numerical_value);
+
+  for (i = datasize - strlen(value_in_string) - 1, j = 0;
+       i < datasize - 1 && j < strlen(value_in_string); i++, j++) {
+    field[i] = value_in_string[j];
+  }
+  field[datasize - 1] = '\0';
+}
+
 void get_mode(char *mode, char *p) {
-    unsigned int i, j;
-    for (i = 4; i < 7; i++) {
-      for (j = (i - 4) * 3 + 1; j <= (i - 3) * 3; j++) {
-        if (j % 3 == 1 && p[j] == 'r') {
-          mode[i] += 4;
-        }
-        if (j % 3 == 2 && p[j] == 'w') {
-          mode[i] += 2;
-        }
-        if (j % 3 == 0 && p[j] == 'x') {
-          mode[i] += 1;
-        }
+  unsigned int i, j;
+  for (i = 4; i < 7; i++) {
+    for (j = (i - 4) * 3 + 1; j <= (i - 3) * 3; j++) {
+      if (j % 3 == 1 && p[j] == 'r') {
+        mode[i] += 4;
+      }
+      if (j % 3 == 2 && p[j] == 'w') {
+        mode[i] += 2;
+      }
+      if (j % 3 == 0 && p[j] == 'x') {
+        mode[i] += 1;
       }
     }
-    mode[sizeof(mode) - 1] = '\0';
+  }
+  mode[sizeof(mode) - 1] = '\0';
 }
 
-void get_string(char *field, int numerical_value, unsigned int datasize) {
-    unsigned int i, j;
-    char value_in_string[datasize];
-
-    sprintf(value_in_string, "%o", numerical_value);
-
-    for (i = datasize - strlen(value_in_string) - 1, j = 0;
-         i < datasize - 1 && j < strlen(value_in_string); i++, j++) {
-      field[i] = value_in_string[j];
-    }
-    field[datasize - 1] = '\0';
-}
 
 int get_chksum(union record filedata, int sum) {
   unsigned int i;
   char chkblanks[] = {CHKBLANKS};
-    for (i = 0; i < sizeof(chkblanks); i++) {
-      sum += (int)chkblanks[i];
-    }
-    sum += (int)filedata.header.typeflag;
-    for (i = 0; i < sizeof(filedata.header.name); i++) {
-      sum += (int)filedata.header.name[i] + (int)filedata.header.linkname[i];
-    }
-    for (i = 0; i < sizeof(filedata.header.uname); i++) {
-      sum += (int)filedata.header.uname[i] + (int)filedata.header.gname[i];
-    }
-    for (i = 0; i < sizeof(filedata.header.size); i++) {
-      sum += (int)filedata.header.size[i] + (int)filedata.header.mtime[i];
-    }
-    for (i = 0; i < sizeof(filedata.header.mode); i++) {
-      sum += (int)filedata.header.mode[i] + (int)filedata.header.uid[i] +
-             filedata.header.gid[i];
-      sum += (int)filedata.header.magic[i] + (int)filedata.header.devmajor[i] +
-             (int)filedata.header.devminor[i];
-    }
+  for (i = 0; i < sizeof(chkblanks); i++) {
+    sum += (int)chkblanks[i];
+  }
+  sum += (int)filedata.header.typeflag;
+  for (i = 0; i < sizeof(filedata.header.name); i++) {
+    sum += (int)filedata.header.name[i] + (int)filedata.header.linkname[i];
+  }
+  for (i = 0; i < sizeof(filedata.header.uname); i++) {
+    sum += (int)filedata.header.uname[i] + (int)filedata.header.gname[i];
+  }
+  for (i = 0; i < sizeof(filedata.header.size); i++) {
+    sum += (int)filedata.header.size[i] + (int)filedata.header.mtime[i];
+  }
+  for (i = 0; i < sizeof(filedata.header.mode); i++) {
+    sum += (int)filedata.header.mode[i] + (int)filedata.header.uid[i] +
+           filedata.header.gid[i];
+    sum += (int)filedata.header.magic[i] + (int)filedata.header.devmajor[i] +
+           (int)filedata.header.devminor[i];
+  }
   return sum;
 }
