@@ -6,9 +6,9 @@
 #include "tema3.h"
 
 void extract(char *file_name, char *archive_name) {
-    unsigned int i, filesize;        
+    unsigned int filesize;        
     union record filedata;
-    char c, to_write_path[sizeof(filedata.header.name) + strlen("extracted_")], name[sizeof(filedata.header.name)], filesize_aux[sizeof(filedata.header.size)]; 
+    char buffer[RECORDSIZE], name[sizeof(filedata.header.name)], filesize_aux[sizeof(filedata.header.size)]; 
     
     int ok_extracted = 0;
 
@@ -29,13 +29,7 @@ void extract(char *file_name, char *archive_name) {
         fread(name, sizeof(name), 1, archive);
 
         if(strcmp(name, file_name) == 0) {
-            memset(to_write_path, '\0', sizeof(to_write_path));
-            strcpy(to_write_path, "extracted_");
-            strcat(to_write_path, file_name);
-
-            puts(to_write_path);
-
-            to_write = fopen(to_write_path, "wb");
+            to_write = fopen(file_name, "wb");
             ok_extracted = 1;
             opened_file_check(to_write);
         }
@@ -57,17 +51,13 @@ void extract(char *file_name, char *archive_name) {
         if (filesize % RECORDSIZE) {
             record_blocks++;
         }
-        for(i = 0; i < filesize; i++) {
-            c = fgetc(archive);
+        for(int i = 0; i < record_blocks; i++) {
+            fread(buffer, sizeof(buffer), 1, archive);
             if (ok_extracted == 1) {
-                fputc(c, to_write);
+                // TODO without the padding, willya?
+                fwrite(buffer, sizeof(buffer), 1, to_write);
             }
         }
-        // you have to read until the end of the blocks, otherwise it gets fucked.
-        for (i = filesize % RECORDSIZE; i < RECORDSIZE; i++) {
-            c = fgetc(archive);
-        }
-        /////////////ADDED ABOVE
 
         // checks if end of archive (marked by a record of zeroes) is reached    
         if(ftell(archive) + RECORDSIZE == eof_pos) {
@@ -80,7 +70,4 @@ void extract(char *file_name, char *archive_name) {
     } else {
         printf("> File not found!\n");
     }
-
-    fclose(to_write);
-    fclose(archive);
 }
