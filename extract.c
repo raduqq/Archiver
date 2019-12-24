@@ -6,9 +6,9 @@
 #include "tema3.h"
 
 void extract(char *file_name, char *archive_name) {
-    unsigned int i, filesize;        
+    int i, filesize;        
     union record filedata;
-    char c, to_write_path[sizeof(filedata.header.name) + strlen("extracted_")], name[sizeof(filedata.header.name)], filesize_aux[sizeof(filedata.header.size)]; 
+    char c, buffer[RECORDSIZE], to_write_path[sizeof(filedata.header.name) + strlen("extracted_")], name[sizeof(filedata.header.name)], filesize_aux[sizeof(filedata.header.size)]; 
     
     int ok_extracted = 0;
 
@@ -63,11 +63,9 @@ void extract(char *file_name, char *archive_name) {
                 fputc(c, to_write);
             }
         }
-        // you have to read until the end of the blocks, otherwise it gets fucked.
         for (i = filesize % RECORDSIZE; i < RECORDSIZE; i++) {
             c = fgetc(archive);
         }
-        /////////////ADDED ABOVE
 
         // checks if end of archive (marked by a record of zeroes) is reached    
         if(ftell(archive) + RECORDSIZE == eof_pos) {
