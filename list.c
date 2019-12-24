@@ -34,23 +34,20 @@ void list(char *archive_name) {
     sscanf(filesize_aux, "%d", &filesize);
     filesize = to_decimal(filesize, OCTAL_BASE);
 
-    // skipping to content
+    // aducem cursorul acolo unde incepe efectiv continutul fisierului
     fseek(archive, RECORDSIZE + pos_init, SEEK_SET);
 
-    // content
+    // sarim peste continutul fisierului
     int record_blocks = filesize / RECORDSIZE;
     if (filesize % RECORDSIZE) {
       record_blocks++;
     }
-    for (int i = 0; i < record_blocks; i++) {
-      fread(buffer, sizeof(buffer), 1, archive);
-    }
+    fseek(archive, record_blocks * RECORDSIZE, SEEK_CUR);
 
-    // checks if end of archive (marked by a record of zeroes) is reached
+    // verificam daca urmeaza acel block de 0 = finalul arhivei
     if (ftell(archive) + RECORDSIZE == eof_pos) {
       break;
     }
   }
-  // should be a legit move..
   fclose(archive);
 }

@@ -6,7 +6,7 @@
 #include "./tema3.h"
 
 void extract(char *file_name, char *archive_name) {
-  int i, filesize;
+  int i, filesize, eof_pos;
   union record filedata;
   char buffer[RECORDSIZE],
       to_write_path[sizeof(filedata.header.name) + strlen("extracted_")],
@@ -21,10 +21,7 @@ void extract(char *file_name, char *archive_name) {
     printf("> File not found!\n");
     return;
   }
-
-  fseek(archive, 0, SEEK_END);
-  int eof_pos = ftell(archive);
-  fseek(archive, 0, SEEK_SET);
+  get_eof_pos(&eof_pos, archive);
 
   while (ftell(archive) < eof_pos && ok_extracted == 0) {
     // name
@@ -70,7 +67,7 @@ void extract(char *file_name, char *archive_name) {
       }
     }
 
-    // checks if end of archive (marked by a record of zeroes) is reached
+    // verificam daca urmeaza acel block de 0 = finalul arhivei
     if (ftell(archive) + RECORDSIZE == eof_pos) {
       break;
     }
