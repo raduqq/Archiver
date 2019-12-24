@@ -8,7 +8,7 @@
 void extract(char *file_name, char *archive_name) {
   int i, filesize;
   union record filedata;
-  char c, buffer[RECORDSIZE],
+  char buffer[RECORDSIZE],
       to_write_path[sizeof(filedata.header.name) + strlen("extracted_")],
       name[sizeof(filedata.header.name)],
       filesize_aux[sizeof(filedata.header.size)];
@@ -70,17 +70,6 @@ void extract(char *file_name, char *archive_name) {
       }
     }
 
-    /*
-            for(i = 0; i < filesize; i++) {
-                c = fgetc(archive);
-                if (ok_extracted == 1) {
-                    fputc(c, to_write);
-                }
-            }
-            for (i = filesize % RECORDSIZE; i < RECORDSIZE; i++) {
-                c = fgetc(archive);
-            }
-    */
     // checks if end of archive (marked by a record of zeroes) is reached
     if (ftell(archive) + RECORDSIZE == eof_pos) {
       break;

@@ -13,9 +13,11 @@ void create(char archive_name[], char directory_name[]) {
   char buffer[RECORDSIZE], padding[RECORDSIZE], *p, space[] = {" "},
                                                     colon[] = {":"};
   union record filedata;
-
   char files_path[RECORDSIZE], usermap_path[RECORDSIZE];
 
+  memset(padding, 0, sizeof(padding));
+
+  // determinarea filepath-ului pt. files.txt, usermap.txt
   strcpy(files_path, directory_name);
   strcpy(usermap_path, directory_name);
 
@@ -25,29 +27,33 @@ void create(char archive_name[], char directory_name[]) {
   FILE *files, *usermap, *archive;
 
   files = fopen(files_path, "r");
-  // opened_file_check(files);
+  opened_file_check(files);
 
   archive = fopen(archive_name, "wb");
-  // opened_file_check(archive);
+  opened_file_check(archive);
 
-  memset(padding, 0, sizeof(padding));
 
   while (fgets(buffer, sizeof(buffer), files)) {
     buffer[strlen(buffer) - 1] = '\0';
+
     // mode
     p = strtok(buffer, space);
     memset(filedata.header.mode, '0', sizeof(filedata.header.mode));
     get_mode(filedata.header.mode, p);
+
     // no_links
     p = strtok(NULL, space);
+
     // owner_name
     p = strtok(NULL, space);
     memset(filedata.header.uname, '\0', sizeof(filedata.header.uname));
     strcpy(filedata.header.uname, p);
+
     // owner_group
     p = strtok(NULL, space);
     memset(filedata.header.gname, '\0', sizeof(filedata.header.gname));
     strcpy(filedata.header.gname, p);
+
     // size
     memset(filedata.header.size, '0', sizeof(filedata.header.size));
 
@@ -55,6 +61,7 @@ void create(char archive_name[], char directory_name[]) {
     int size = atoi(p);
     memset(filedata.header.size, '0', sizeof(filedata.header.size));
     get_string(filedata.header.size, size, sizeof(filedata.header.size));
+
     // last_change_time
     memset(filedata.header.mtime, '\0', sizeof(filedata.header.mtime));
 
@@ -80,14 +87,11 @@ void create(char archive_name[], char directory_name[]) {
 
     // parsing usermap:
     usermap = fopen(usermap_path, "r");
-    // opened_file_check(usermap);
-
-    char ok = 0;
+    opened_file_check(usermap);
     int uid, gid;
-    while (fgets(buffer, sizeof(buffer), usermap) && ok == 0) {
+    while (fgets(buffer, sizeof(buffer), usermap)) {
       p = strtok(buffer, ":");
       if (strcmp(p, filedata.header.uname) == 0) {
-        ok = 1;
         // uid
         p = strtok(NULL, colon);
         p = strtok(NULL, colon);
@@ -95,30 +99,36 @@ void create(char archive_name[], char directory_name[]) {
         uid = atoi(p);
         memset(filedata.header.uid, '0', sizeof(filedata.header.uid));
         get_string(filedata.header.uid, uid, sizeof(filedata.header.uid));
-
         // gid
         p = strtok(NULL, colon);
 
         gid = atoi(p);
         memset(filedata.header.gid, '0', sizeof(filedata.header.gid));
         get_string(filedata.header.gid, gid, sizeof(filedata.header.gid));
+
+        break;
       }
     }
-
     fclose(usermap);
+
     // typeflag
     filedata.header.typeflag = '\0';
+    
     // magic
     strcpy(filedata.header.magic, "GNUtar ");
+    
     // devmajor
     memset(filedata.header.devmajor, '\0', sizeof(filedata.header.devmajor));
+    
     // devminor
     memset(filedata.header.devminor, '\0', sizeof(filedata.header.devminor));
+    
     // chksum
     int sum = get_chksum(filedata, 0);
     memset(filedata.header.chksum, '0', sizeof(filedata.header.chksum));
     get_string(filedata.header.chksum, sum, sizeof(filedata.header.chksum));
-    // writing HEADER to archive
+    
+    // scrierea header-ului in arhiva
     fwrite(filedata.header.name, 1, sizeof(filedata.header.name), archive);
     fwrite(filedata.header.mode, 1, sizeof(filedata.header.mode), archive);
     fwrite(filedata.header.uid, 1, sizeof(filedata.header.uid), archive);
@@ -138,7 +148,8 @@ void create(char archive_name[], char directory_name[]) {
     fwrite(filedata.header.devminor, 1, sizeof(filedata.header.devminor),
            archive);
     fwrite(padding, 1, sizeof(padding) - sizeof(filedata.header), archive);
-    // writing CONTENT to archive
+    
+    // scrierea continutului fisierului in arhiva
     char to_archive_path[RECORDSIZE];
     memset(to_archive_path, '\0', sizeof(to_archive_path));
 
@@ -153,6 +164,7 @@ void create(char archive_name[], char directory_name[]) {
     }
     fclose(to_archive);
   }
+  // scrierea unui bloc de 0-uri la final de arhiva
   fwrite(padding, 1, sizeof(padding), archive);
 
   fclose(files);

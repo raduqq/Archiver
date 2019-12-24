@@ -5,6 +5,12 @@
 #include <string.h>
 #include "./tema3.h"
 
+void get_eof_pos(int *eof_pos, FILE *f) {
+  fseek(f, 0, SEEK_END);
+  *eof_pos = ftell(f);
+  fseek(f, 0, SEEK_SET);
+}
+
 int to_decimal(int x, int base) {
   int decimal = 0, pow = 1;
 
@@ -24,25 +30,27 @@ void opened_file_check(FILE *f) {
   }
 }
 
-// USE MACROS ON THIS ONE
-void get_string(char *field, int numerical_value, unsigned int datasize) {
+void get_string(char *field, int numerical_value, int datasize) {
   #define DATASIZE_const datasize
 
-  unsigned int i, j;
+  int i, j;
   char value_in_string[DATASIZE_const];
 
   sprintf(value_in_string, "%o", numerical_value);
 
   for (i = datasize - strlen(value_in_string) - 1, j = 0;
-       i < datasize - 1 && j < strlen(value_in_string); i++, j++) {
+       i < datasize - 1 && j < (int)strlen(value_in_string); i++, j++) {
     field[i] = value_in_string[j];
   }
   field[datasize - 1] = '\0';
 }
 
 void get_mode(char *mode, char *p) {
-  unsigned int i, j;
-  for (i = 4; i < 7; i++) {
+  #define BEGIN_STRING_MODE 4
+  #define END_STRING_MODE 7
+
+  int i, j;
+  for (i = BEGIN_STRING_MODE; i < END_STRING_MODE; i++) {
     for (j = (i - 4) * 3 + 1; j <= (i - 3) * 3; j++) {
       if (j % 3 == 1 && p[j] == 'r') {
         mode[i] += 4;

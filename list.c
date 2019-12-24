@@ -6,7 +6,7 @@
 #include "./tema3.h"
 
 void list(char *archive_name) {
-  unsigned int filesize;
+  int filesize, eof_pos;
   union record filedata;
   char buffer[RECORDSIZE], name[sizeof(filedata.header.name)],
       filesize_aux[sizeof(filedata.header.size)];
@@ -15,12 +15,9 @@ void list(char *archive_name) {
 
   archive = fopen(archive_name, "rb");
   opened_file_check(archive);
+  get_eof_pos(&eof_pos, archive);
 
-  fseek(archive, 0, SEEK_END);
-  int eof_pos = ftell(archive);
-  fseek(archive, 0, SEEK_SET);
-
-  while (ftell(archive) < eof_pos) {
+    while (ftell(archive) < eof_pos) {
     // name
     int pos_init = ftell(archive);
     fread(name, sizeof(name), 1, archive);
