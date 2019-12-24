@@ -1,0 +1,53 @@
+==10744== Memcheck, a memory error detector
+==10744== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==10744== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==10744== Command: ./archiver
+==10744== Parent PID: 10743
+==10744== 
+==10744== Conditional jump or move depends on uninitialised value(s)
+==10744==    at 0x4C37066: rawmemchr (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==10744==    by 0x4ECC351: _IO_str_init_static_internal (strops.c:41)
+==10744==    by 0x4EB860C: __isoc99_vsscanf (isoc99_vsscanf.c:41)
+==10744==    by 0x4EB8573: __isoc99_sscanf (isoc99_sscanf.c:31)
+==10744==    by 0x10A019: extract (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==    by 0x10904B: main (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744== 
+==10744== Use of uninitialised value of size 8
+==10744==    at 0x4EBA254: fclose@@GLIBC_2.2.5 (iofclose.c:48)
+==10744==    by 0x10A16C: extract (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==    by 0x10904B: main (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744== 
+==10744== Invalid read of size 4
+==10744==    at 0x4EBA254: fclose@@GLIBC_2.2.5 (iofclose.c:48)
+==10744==    by 0x10A16C: extract (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==    by 0x10904B: main (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==10744== 
+==10744== 
+==10744== Process terminating with default action of signal 11 (SIGSEGV)
+==10744==  Access not within mapped region at address 0x0
+==10744==    at 0x4EBA254: fclose@@GLIBC_2.2.5 (iofclose.c:48)
+==10744==    by 0x10A16C: extract (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==    by 0x10904B: main (in /home/raduminea/Uni/PC/Arbeit/Teme/3/archiver)
+==10744==  If you believe this happened as a result of a stack
+==10744==  overflow in your program's main thread (unlikely but
+==10744==  possible), you can try to increase the size of the
+==10744==  main thread stack using the --main-stacksize= flag.
+==10744==  The main thread stack size used in this run was 8388608.
+==10744== 
+==10744== HEAP SUMMARY:
+==10744==     in use at exit: 552 bytes in 1 blocks
+==10744==   total heap usage: 4 allocs, 3 frees, 12,840 bytes allocated
+==10744== 
+==10744== LEAK SUMMARY:
+==10744==    definitely lost: 0 bytes in 0 blocks
+==10744==    indirectly lost: 0 bytes in 0 blocks
+==10744==      possibly lost: 0 bytes in 0 blocks
+==10744==    still reachable: 552 bytes in 1 blocks
+==10744==         suppressed: 0 bytes in 0 blocks
+==10744== Reachable blocks (those to which a pointer was found) are not shown.
+==10744== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==10744== 
+==10744== For counts of detected and suppressed errors, rerun with: -v
+==10744== Use --track-origins=yes to see where uninitialised values come from
+==10744== ERROR SUMMARY: 41 errors from 3 contexts (suppressed: 0 from 0)

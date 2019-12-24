@@ -51,4 +51,6 @@ void list(char *archive_name) {
             break;
         }
    }
+   // should be a legit move..
+   fclose(archive);
 }
