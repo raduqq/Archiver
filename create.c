@@ -8,10 +8,10 @@
 #include <time.h>
 #include "./tema3.h"
 
-
 void create(char archive_name[], char directory_name[]) {
-  char buffer[RECORDSIZE], padding[RECORDSIZE], *p, space[] = {" "}, colon[] = {":"}, 
-      files_path[RECORDSIZE], usermap_path[RECORDSIZE], to_archive_path[RECORDSIZE];
+  char buffer[RECORDSIZE], padding[RECORDSIZE], *p,
+      space[] = {" "}, colon[] = {":"}, files_path[RECORDSIZE],
+      usermap_path[RECORDSIZE], to_archive_path[RECORDSIZE];
 
   union record filedata;
   memset(&filedata.header, '\0', sizeof(filedata));
@@ -31,7 +31,6 @@ void create(char archive_name[], char directory_name[]) {
 
   archive = fopen(archive_name, "wb");
   opened_file_check(archive);
-
 
   while (fgets(buffer, sizeof(buffer), files)) {
     buffer[strlen(buffer) - 1] = '\0';
@@ -116,25 +115,7 @@ void create(char archive_name[], char directory_name[]) {
     get_string(filedata.header.chksum, sum, sizeof(filedata.header.chksum));
 
     // scrierea header-ului in arhiva
-    fwrite(filedata.header.name, 1, sizeof(filedata.header.name), archive);
-    fwrite(filedata.header.mode, 1, sizeof(filedata.header.mode), archive);
-    fwrite(filedata.header.uid, 1, sizeof(filedata.header.uid), archive);
-    fwrite(filedata.header.gid, 1, sizeof(filedata.header.gid), archive);
-    fwrite(filedata.header.size, 1, sizeof(filedata.header.size), archive);
-    fwrite(filedata.header.mtime, 1, sizeof(filedata.header.mtime), archive);
-    fwrite(filedata.header.chksum, 1, sizeof(filedata.header.chksum), archive);
-    fwrite(&filedata.header.typeflag, 1, sizeof(filedata.header.typeflag),
-           archive);
-    fwrite(filedata.header.linkname, 1, sizeof(filedata.header.linkname),
-           archive);
-    fwrite(filedata.header.magic, 1, sizeof(filedata.header.magic), archive);
-    fwrite(filedata.header.uname, 1, sizeof(filedata.header.uname), archive);
-    fwrite(filedata.header.gname, 1, sizeof(filedata.header.gname), archive);
-    fwrite(filedata.header.devmajor, 1, sizeof(filedata.header.devmajor),
-           archive);
-    fwrite(filedata.header.devminor, 1, sizeof(filedata.header.devminor),
-           archive);
-    fwrite(padding, 1, sizeof(padding) - sizeof(filedata.header), archive);
+    write_header(filedata, padding, archive);
 
     // scrierea continutului fisierului in arhiva
     memset(to_archive_path, '\0', sizeof(to_archive_path));

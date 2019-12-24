@@ -5,12 +5,6 @@
 #include <string.h>
 #include "./tema3.h"
 
-void get_eof_pos(int *eof_pos, FILE *f) {
-  fseek(f, 0, SEEK_END);
-  *eof_pos = ftell(f);
-  fseek(f, 0, SEEK_SET);
-}
-
 int to_decimal(int x, int base) {
   int decimal = 0, pow = 1;
 
@@ -21,6 +15,28 @@ int to_decimal(int x, int base) {
   }
 
   return decimal;
+}
+
+void get_eof_pos(int *eof_pos, FILE *f) {
+  fseek(f, 0, SEEK_END);
+  *eof_pos = ftell(f);
+  fseek(f, 0, SEEK_SET);
+}
+
+int get_filesize(FILE *f) {
+  union record filedata;
+  int filesize;
+  char filesize_aux[sizeof(filedata.header.size)];
+  int filesize_position = sizeof(filedata.header.mode) +
+                            sizeof(filedata.header.uid) +
+                            sizeof(filedata.header.gid);
+
+  fseek(f, filesize_position, SEEK_CUR);
+  fread(filesize_aux, sizeof(filesize_aux), 1, f);
+
+  sscanf(filesize_aux, "%d", &filesize);
+  filesize = to_decimal(filesize, OCTAL_BASE);
+  return filesize;
 }
 
 void opened_file_check(FILE *f) {
@@ -90,4 +106,26 @@ int get_chksum(union record filedata, int sum) {
            (int)filedata.header.devminor[i];
   }
   return sum;
+}
+
+void write_header(union record filedata, char *padding, FILE *f) {
+  fwrite(filedata.header.name, 1, sizeof(filedata.header.name), f);
+    fwrite(filedata.header.mode, 1, sizeof(filedata.header.mode), f);
+    fwrite(filedata.header.uid, 1, sizeof(filedata.header.uid), f);
+    fwrite(filedata.header.gid, 1, sizeof(filedata.header.gid), f);
+    fwrite(filedata.header.size, 1, sizeof(filedata.header.size), f);
+    fwrite(filedata.header.mtime, 1, sizeof(filedata.header.mtime), f);
+    fwrite(filedata.header.chksum, 1, sizeof(filedata.header.chksum), f);
+    fwrite(&filedata.header.typeflag, 1, sizeof(filedata.header.typeflag),
+           f);
+    fwrite(filedata.header.linkname, 1, sizeof(filedata.header.linkname),
+           f);
+    fwrite(filedata.header.magic, 1, sizeof(filedata.header.magic), f);
+    fwrite(filedata.header.uname, 1, sizeof(filedata.header.uname), f);
+    fwrite(filedata.header.gname, 1, sizeof(filedata.header.gname), f);
+    fwrite(filedata.header.devmajor, 1, sizeof(filedata.header.devmajor),
+           f);
+    fwrite(filedata.header.devminor, 1, sizeof(filedata.header.devminor),
+           f);
+    fwrite(padding, 1, RECORDSIZE - sizeof(filedata.header), f);
 }

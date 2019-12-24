@@ -6,11 +6,9 @@
 #include "./tema3.h"
 
 void list(char *archive_name) {
-  int filesize, eof_pos;
+  int eof_pos;
   union record filedata;
-  char buffer[RECORDSIZE], name[sizeof(filedata.header.name)],
-      filesize_aux[sizeof(filedata.header.size)];
-
+  char buffer[RECORDSIZE], name[sizeof(filedata.header.name)];
   FILE *archive;
 
   archive = fopen(archive_name, "rb");
@@ -24,15 +22,7 @@ void list(char *archive_name) {
     printf("> %s\n", name);
 
     // size
-    int filesize_position = sizeof(filedata.header.mode) +
-                            sizeof(filedata.header.uid) +
-                            sizeof(filedata.header.gid);
-
-    fseek(archive, filesize_position, SEEK_CUR);
-    fread(filesize_aux, sizeof(filesize_aux), 1, archive);
-
-    sscanf(filesize_aux, "%d", &filesize);
-    filesize = to_decimal(filesize, OCTAL_BASE);
+    int filesize = get_filesize(archive);
 
     // aducem cursorul acolo unde incepe efectiv continutul fisierului
     fseek(archive, RECORDSIZE + pos_init, SEEK_SET);

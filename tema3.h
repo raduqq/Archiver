@@ -19,14 +19,14 @@ union record {
     } header;
 };
 
-void get_eof_pos(int *eof_pos, FILE *f);
-// get_size
-// check_end_archive
 int to_decimal(int x, int base);
+void get_eof_pos(int *eof_pos, FILE *f);
+int get_filesize(FILE *f);
 void opened_file_check(FILE *f);
 void get_string(char *, int, int);
 void get_mode(char *mode, char *p);
 int get_chksum(union record filedata, int sum);
+void write_header(union record filedata, char *padding, FILE *f);
 void list(char *archive_name);
 void create(char *archive_name, char *directory_name);
 void extract(char *file_name, char *archive_name);

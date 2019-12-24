@@ -6,12 +6,11 @@
 #include "./tema3.h"
 
 void extract(char *file_name, char *archive_name) {
-  int i, filesize, eof_pos;
+  int i, eof_pos;
   union record filedata;
   char buffer[RECORDSIZE],
       to_write_path[sizeof(filedata.header.name) + strlen("extracted_")],
-      name[sizeof(filedata.header.name)],
-      filesize_aux[sizeof(filedata.header.size)];
+      name[sizeof(filedata.header.name)];
 
   int ok_extracted = 0;
 
@@ -38,15 +37,7 @@ void extract(char *file_name, char *archive_name) {
     }
 
     // size
-    int filesize_position = sizeof(filedata.header.mode) +
-                            sizeof(filedata.header.uid) +
-                            sizeof(filedata.header.gid);
-
-    fseek(archive, filesize_position, SEEK_CUR);
-    fread(filesize_aux, sizeof(filesize_aux), 1, archive);
-
-    sscanf(filesize_aux, "%d", &filesize);
-    filesize = to_decimal(filesize, OCTAL_BASE);
+    int filesize = get_filesize(archive);
 
     // skipping to content
     fseek(archive, RECORDSIZE + pos_init, SEEK_SET);
